@@ -1,0 +1,31 @@
+import java.util.Scanner;
+
+public class Calculator {
+    
+    public static float calc(float a, char b, float c) {
+        float res = 0;
+        switch (b) {
+            case '*': res = a*c; break;
+            case '+': res = a+c; break;
+            case '-': res = a-c; break;
+            case '/': res = a/c; break;
+        }
+        return res;
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        System.out.println("Enter the first num and the second num");
+        float fnum,snum = 0;
+        char op;
+        fnum = sc.nextFloat();
+        snum = sc.nextFloat();
+        System.out.println("Enter the operation char");
+        op = sc.next().charAt(0);
+        float result = calc(fnum, op, snum);
+        if (result == (int)result) {
+            System.out.printf("Result:%.0f", result);
+        }
+        else {System.out.printf("Result:%f", result);}
+    }
+}
