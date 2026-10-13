@@ -4,9 +4,9 @@ public class Time {
     int h;
     int m;
     int s;
-    public static void calcdif(int h1, int m1, int s1, int h2, int m2, int s2) {
-        int a1 = h1*60*60 + m1*60 + s1;
-        int a2 = h2*60*60 + m2*60 + s2;
+    public void calcdif(Time other) {
+        int a1 = this.h*60*60 + this.m*60 + this.s;
+        int a2 = other.h*60*60 + other.m*60 + other.s;
         int dif = Math.abs(a1 - a2);
         int sec = dif % 60;
         int min = (dif % 3600) / 60;
@@ -20,11 +20,12 @@ public class Time {
         time1.h = sc.nextInt();
         time1.m = sc.nextInt();
         time1.s = sc.nextInt();
+        
         System.out.println("Enter for the second time: *hours* *minutes* *seconds*");
         Time time2 = new Time();
         time2.h = sc.nextInt();
         time2.m = sc.nextInt();
         time2.s = sc.nextInt();
-        calcdif(time1.h, time1.m, time1.s, time2.h, time2.m, time2.s);
+        time1.calcdif(time2);
     }
 }
