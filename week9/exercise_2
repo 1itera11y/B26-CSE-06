@@ -21,7 +21,7 @@ public class Shape {
         ellipse1.perimeter();
         System.out.printf("Area: %f\nPerimeter: %f\n", ellipse1.area, ellipse1.perimeter);
         Shape square1 = new Square(0,0,10);
-        System.out.printf("Area: %f\nPerimeter: %f\n", square1.area, square1.perimeter);
+        System.out.printf("Area: %f\nPerimeter: %f\n", square1.area(), square1.perimeter());
     }
 }
 class Circle extends Shape { 
@@ -117,7 +117,7 @@ class Ellipse extends Shape {
     }
     @Override 
     float perimeter() {
-        this.perimeter = (float)3.14 * (3 * (a + b) - (float)0.5 * ((3 * a + b)*(a + 3 * b)));
+        this.perimeter = (float)3.14 * (3 * (a + b) - (float)Math.sqrt((3 * a + b)*(a + 3 * b)));
         return this.perimeter;
     }
 }
