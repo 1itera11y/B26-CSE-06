@@ -21,7 +21,7 @@ public class Animal {
 
     }
     public static void main(String[] args) {
-        Cow cow1 = new Cow(null, 0, 0, null);
+        Animal cow1 = new Cow(Cow1, 140, 150, black);
         cow1.makeSound();
     }
 }
