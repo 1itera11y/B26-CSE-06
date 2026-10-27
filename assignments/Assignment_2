@@ -1,0 +1,399 @@
+#include <stdio.h> //
+#include <string.h>
+#include <stdlib.h>
+#include <math.h>
+
+FILE *input;
+FILE *output;
+
+// Driver Status
+typedef enum {
+    ACTIVE,
+    RETIRED,
+    DISQUALIFIED
+} DriverStatus;
+
+//Race Type
+typedef enum {
+    NORMAL_RACE,
+    SPRINT_RACE
+} RaceType;
+
+//Result Type
+typedef enum {
+    FINISHED,
+    DID_NOT_FINISH,
+    DISQUALIFIED_RESULT
+} ResultType;
+
+// Race Result Union
+typedef union {
+    float finish_time;
+    char *dnf_reason;
+    char *disqualification_reason;
+} ResultExtra;
+
+//Race Result Structure
+typedef struct {
+    int driver_id;
+    int position;
+    ResultType result_type;
+    ResultExtra extra;
+} RaceResult;
+
+//Driver Structure
+typedef struct {
+    int driver_id;
+    char *name;
+    char *team;
+
+    DriverStatus status;
+
+    int races_completed;
+    int wins;
+    int points;
+} Driver;
+
+typedef struct {
+    int race_id;
+    RaceType race_type;
+    int finished;
+    int disqualified;
+    int did_not_finished;
+    int winner;
+} Race;
+
+int numofDrivers = 0; int numofRaces = 0; int numOfResults_ofRaces = 0;
+int Normalpoints(int pos);
+int Sprintpoints(int pos);
+void Standings(Driver *drivers);
+void CommandDriver(Driver *drivers);
+void Team(Driver *drivers);
+void Top(Driver *drivers);
+void Add_driver(Driver **drivers);
+void Retire(Driver *drivers);
+void Disqualify(Driver *drivers);
+void Race_stats(Race *races);
+
+int main() {
+    // opening files and checking their existance in our programm
+    input = fopen("input.txt","r");
+    output = fopen("output.txt","w");
+    if (input == NULL || output == NULL) {
+        return 1;
+    }
+
+    fscanf(input, "%d", &numofDrivers);
+    Driver *drivers = malloc(numofDrivers * sizeof(Driver));
+    if (drivers == NULL) {return 1;}
+    for (int i = 0; i < numofDrivers; i++) {
+        drivers[i].name = malloc(30 * sizeof(char));
+        drivers[i].team = malloc(30 * sizeof(char));
+        fscanf(input,"%d%29s%29s", &drivers[i].driver_id, drivers[i].name, drivers[i].team);
+        drivers[i].status = ACTIVE;
+        drivers[i].races_completed = 0;
+        drivers[i].wins = 0;
+        drivers[i].points = 0;
+    }
+
+    fscanf(input,"%d",&numofRaces);
+    Race *races = malloc(numofRaces * sizeof(Race));
+    if (races == NULL) {return 1;}
+    for (int i = 0; i < numofRaces; i++) {
+        races[i].did_not_finished = 0; races[i].disqualified = 0; races[i].winner = 0; races[i].finished = 0; races[i].race_id = 0;
+        
+        fscanf(input, "%d", &races[i].race_id); // defining race_id for each race 
+        char whichracetype[12];
+        
+        fscanf(input, "%11s", whichracetype); // defining race type of race number i 
+        if (strcmp(whichracetype,"NORMAL_RACE") == 0) {
+            races[i].race_type = NORMAL_RACE;
+        }
+        else if (strcmp(whichracetype,"SPRINT_RACE") == 0) {
+            races[i].race_type = SPRINT_RACE;
+        }
+        fscanf(input, "%d", &numOfResults_ofRaces); //defining the number of results in the race
+        RaceResult *raceResults = calloc(numOfResults_ofRaces, sizeof(RaceResult));
+
+        for (int j = 0; j < numOfResults_ofRaces; j++) { 
+            fscanf(input, "%d%d", &raceResults[j].driver_id, &raceResults[j].position);
+
+            char result_type[30];
+            fscanf(input, "%29s", result_type);
+
+            // reading result_type
+            if (strcmp(result_type,"FINISHED") == 0) {
+                if (raceResults[j].result_type == DID_NOT_FINISH || raceResults[j].result_type == DISQUALIFIED_RESULT) {
+                    free(raceResults[j].extra.disqualification_reason);
+                }
+                raceResults[j].result_type = FINISHED;
+                fscanf(input, "%f", &raceResults[j].extra.finish_time);
+                races[i].finished++;
+                
+            }
+            
+            else if (strcmp(result_type,"DID_NOT_FINISH") == 0) {
+                if (raceResults[j].result_type == DID_NOT_FINISH || raceResults[j].result_type == DISQUALIFIED_RESULT) {
+                    free(raceResults[j].extra.dnf_reason);
+                }
+                raceResults[j].result_type = DID_NOT_FINISH;
+                raceResults[j].extra.dnf_reason = calloc(20,sizeof(char));
+                fscanf(input, "%29s", raceResults[j].extra.dnf_reason);
+                races[i].did_not_finished++;
+            }
+
+            else if (strcmp(result_type,"DISQUALIFIED_RESULT") == 0) {
+                if (raceResults[j].result_type == DID_NOT_FINISH || raceResults[j].result_type == DISQUALIFIED_RESULT) {
+                    free(raceResults[j].extra.disqualification_reason);
+                }
+                raceResults[j].result_type = DISQUALIFIED_RESULT;
+                raceResults[j].extra.disqualification_reason = calloc(30, sizeof(char));
+                fscanf(input, "%29s",raceResults[j].extra.disqualification_reason);
+                races[i].disqualified++;
+            }
+            else {break;}
+
+            int points = 0;
+            if (races[i].race_type == NORMAL_RACE) { // calculating points for the position
+                points = Normalpoints(raceResults[j].position);
+            }
+            else {
+                points = Sprintpoints(raceResults[j].position);
+            }
+            for (int k = 0; k < numofDrivers; k++) { // assigning points, races_completed, and wins for each driver
+                if (raceResults[j].result_type == FINISHED && raceResults[j].driver_id == drivers[k].driver_id) {
+                    if (drivers[k].status == ACTIVE) {
+                        drivers[k].points += points;
+                        drivers[k].races_completed++;
+                        if (raceResults[j].position == 1) {
+                            drivers[k].wins++;
+                            races[i].winner = drivers[k].driver_id; // remembering winner for i race
+                        }
+                    }
+                    
+                }
+            }
+        }
+        for (int i = 0; i < numOfResults_ofRaces; i++) {
+            if (raceResults[i].result_type == DID_NOT_FINISH) {
+                free(raceResults[i].extra.dnf_reason);
+            }
+            if (raceResults[i].result_type == DISQUALIFIED_RESULT) {
+                free(raceResults[i].extra.disqualification_reason);
+            }
+        }
+        free(raceResults);
+    }
+    int numofCommands = 0;
+    fscanf(input,"%d",&numofCommands);
+    
+    // reading input commands 
+    for (int i = 0; i < numofCommands; i++) {
+        char command[20];
+        fscanf(input, "%19s", command);
+        if (strcmp(command,"STANDINGS") == 0) {
+            Standings(drivers);
+        }
+        else if (strcmp(command,"DRIVER") == 0) {
+            CommandDriver(drivers);
+        }
+        else if (strcmp(command,"TEAM") == 0) {
+            Team(drivers);
+        }
+        else if (strcmp(command,"TOP") == 0) {
+            Top(drivers);
+        }
+        else if (strcmp(command,"ADD_DRIVER") == 0) {
+            Add_driver(&drivers);
+        }
+        else if (strcmp(command,"RETIRE") == 0) {
+            Retire(drivers);
+        }
+        else if (strcmp(command,"DISQUALIFY") == 0) {
+            Disqualify(drivers);
+        }
+        else if (strcmp(command,"RACE_STATS") == 0) {
+            Race_stats(races);
+        }
+    }
+
+
+    fclose(input); 
+    fclose(output);
+    for (int i = 0; i < numofDrivers; i++) {
+        free(drivers[i].name);
+        free(drivers[i].team);
+    }
+    free(drivers);
+    free(races);
+    
+
+}
+
+//---------------------------------------------------------------------
+//            block with commands
+//---------------------------------------------------------------------
+void Standings(Driver *drivers) {
+    for (int i = 0; i < numofDrivers; i++) {
+        int swapped = 0;
+        for (int j = 0; j < numofDrivers - i - 1; j++) {
+            if (drivers[j].points < drivers[j+1].points || (drivers[j].points == drivers[j+1].points && drivers[j].wins < drivers[j+1].wins) || (drivers[j].points == drivers[j+1].points && drivers[j].wins == drivers[j+1].wins && drivers[j].driver_id > drivers[j+1].driver_id)) {
+                Driver temp = drivers[j];
+                drivers[j] = drivers[j+1];
+                drivers[j+1] = temp;
+                swapped = 1;
+            }
+        }
+        if (swapped == 0) {break;}
+    }
+    for (int i = 0; i < numofDrivers; i++) {
+        fprintf(output,"%d %s %s %d %d\n", drivers[i].driver_id, drivers[i].name, drivers[i].team, drivers[i].points, drivers[i].wins);
+    }
+}
+
+void CommandDriver(Driver *drivers) {
+    int driver_id = 0;
+    fscanf(input, "%d", &driver_id);
+    int check = 0;
+    for (int i = 0; i < numofDrivers; i++) {
+        if (driver_id == drivers[i].driver_id) {
+            fprintf(output,"%d %s %s\n", drivers[i].driver_id, drivers[i].name, drivers[i].team);
+            switch (drivers[i].status) {
+                case ACTIVE: fprintf(output, "STATUS ACTIVE\n"); break;
+                case RETIRED: fprintf(output, "STATUS RETIRED\n"); break;
+                case DISQUALIFIED: fprintf(output, "STATUS DISQUALIFIED\n"); break;
+            }
+            fprintf(output, "RACES %d\nWINS %d\nPOINTS %d\n", drivers[i].races_completed, drivers[i].wins, drivers[i].points);
+            check = 1;
+            break;
+        }
+    }
+    if (check == 0) {
+        fprintf(output, "NOT FOUND\n");
+    }
+}
+
+void Team(Driver *drivers) {
+    char team_name[30];
+    fscanf(input, "%29s",team_name);
+    int check = 0;
+    int sumpoints = 0; int numdrivers = 0; int wins = 0;
+    for (int i = 0; i < numofDrivers; i++) {
+        if (strcmp(team_name, drivers[i].team) == 0) {
+            numdrivers++;
+            sumpoints += drivers[i].points;
+            wins += drivers[i].wins;
+        }
+    }
+    fprintf(output, "%s\nDRIVERS %d\nPOINTS %d\nWINS %d\n", team_name, numdrivers, sumpoints, wins);
+}
+
+void Top(Driver *drivers) {
+    if (numofDrivers == 0) {
+        fprintf(output, "NO DATA\n");
+    }
+    else {
+        int topdriver = 0;
+        for (int i = 1; i < numofDrivers; i++) {
+            if (drivers[i].points > drivers[topdriver].points || (drivers[i].points == drivers[topdriver].points && drivers[i].wins > drivers[topdriver].wins) || (drivers[i].points == drivers[topdriver].points && drivers[i].wins == drivers[topdriver].wins && drivers[i].driver_id < drivers[topdriver].driver_id)) {
+                topdriver = i;
+            }
+        }
+        fprintf(output,"%d %s %s %d\n", drivers[topdriver].driver_id, drivers[topdriver].name, drivers[topdriver].team, drivers[topdriver].points);
+    }
+}
+
+void Add_driver(Driver **drivers) {
+    Driver *temp = realloc(*drivers, (numofDrivers+1)*sizeof(Driver));
+    if (temp == NULL) {
+        return;
+    }
+    *drivers = temp;
+    (*drivers)[numofDrivers].name = calloc(30,sizeof(char));
+    (*drivers)[numofDrivers].team = calloc(30,sizeof(char));
+    (*drivers)[numofDrivers].driver_id = 0;
+    fscanf(input, "%d %29s %29s", &(*drivers)[numofDrivers].driver_id, (*drivers)[numofDrivers].name, (*drivers)[numofDrivers].team);
+    (*drivers)[numofDrivers].races_completed = 0;
+    (*drivers)[numofDrivers].status = ACTIVE;
+    (*drivers)[numofDrivers].points = 0;
+    (*drivers)[numofDrivers].wins = 0;
+    numofDrivers++;
+}
+
+void Retire(Driver *drivers) {
+    int driver_id = 0;
+    fscanf(input, "%d", &driver_id);
+    for (int i = 0; i < numofDrivers; i++) {
+        if (drivers[i].driver_id == driver_id) {
+            drivers[i].status = RETIRED;
+        }
+    }
+}
+
+void Disqualify(Driver *drivers) {
+    int driver_id = 0;
+    fscanf(input, "%d", &driver_id);
+    for (int i = 0; i < numofDrivers; i++) {
+        if (drivers[i].driver_id == driver_id) {
+            drivers[i].status = DISQUALIFIED;
+        }
+    }
+}
+
+void Race_stats(Race *races) {
+    int race_id = 0;
+    fscanf(input, "%d", &race_id);
+    int check = 0;
+    for (int i = 0; i < numofRaces; i++) {
+        if (race_id == races[i].race_id) {
+            fprintf(output, "RACE %d\nFINISHED %d\nDNF %d\nDISQUALIFIED %d\nWINNER %d\n", races[i].race_id, races[i].finished, races[i].did_not_finished, races[i].disqualified, races[i].winner);
+            check = 1;
+            break;
+        }
+    }
+    if (check == 0) {
+        fprintf(output,"NOT FOUND\n");
+    }
+}
+//---------------------------------------------------------------------
+//         end of block with commands
+//---------------------------------------------------------------------
+
+
+// calculating points of Normal race for each pos 
+int Normalpoints(int pos) {
+    if (pos >= 11) {
+        return 0;
+    }
+    switch (pos) {
+        case 1: return 25;
+        case 2: return 18;
+        case 3: return 15;
+        case 4: return 12;
+        case 5: return 10;
+        case 6: return 8;
+        case 7: return 6;
+        case 8: return 4;
+        case 9: return 2;
+        case 10: return 1;
+        default: return 0;
+    }
+}
+
+// calculating points of Sprint race for each pos 
+int Sprintpoints(int pos) {
+    if (pos >= 9) {
+        return 0;
+    }
+    switch (pos) {
+        case 1: return 8;
+        case 2: return 7;
+        case 3: return 6;
+        case 4: return 5;
+        case 5: return 4;
+        case 6: return 3;
+        case 7: return 2;
+        case 8: return 1;
+        default: return 0;
+    }
+}
