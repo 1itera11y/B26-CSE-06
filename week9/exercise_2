@@ -1,0 +1,123 @@
+
+
+public class Shape {
+    int numSides;
+    float area;
+    float perimeter;
+    public Shape(float area, float perimeter) {
+        this.area = area;
+        this.perimeter = perimeter;
+    }
+    float area() {
+        return 0;
+    }
+    float perimeter() {
+        return 0;
+    }
+
+    public static void main(String[] args) {
+        Shape ellipse1 = new Ellipse(0,0,4, (float)5.4, (float)6.7);
+        ellipse1.area();
+        ellipse1.perimeter();
+        System.out.printf("Area: %f\nPerimeter: %f\n", ellipse1.area, ellipse1.perimeter);
+        Shape square1 = new Square(0,0,10);
+        System.out.printf("Area: %f\nPerimeter: %f\n", square1.area, square1.perimeter);
+    }
+}
+class Circle extends Shape { 
+    public float r;
+    public Circle(float area, float perimeter, float r) {
+        super(area, perimeter);
+        this.r = r;
+    }
+    @Override 
+    float area() {
+        this.area = (float)3.14 * (r*r);
+        return this.area;
+    }
+    @Override 
+    float perimeter() {
+        this.perimeter = 2 * (float)3.14 * r;
+        return this.perimeter;
+    }
+}
+class Rectangle extends Shape {
+    public float side1;
+    public float side2;
+    public Rectangle(float area, float perimeter, float side1, float side2) {
+        super(area, perimeter);
+        this.side1 = side1;
+        this.side2 = side2;
+    }
+    @Override 
+    float area() {
+        this.area = side1 * side2;
+        return this.area;
+    }
+    @Override 
+    float perimeter() {
+        this.perimeter = 2 * (side1 + side2);
+        return this.perimeter;
+    }
+}
+class Triangle extends Shape {
+    public float side1_base;
+    public float side2;
+    public float side3;
+    public float height;
+    public Triangle(float area, float perimeter, float side1_base, float side2, float side3, float height) {
+        super(area, perimeter);
+        this.side1_base = side1_base;
+        this.height = height;
+        this.side2 = side2;
+        this.side3 = side3;
+    }
+    @Override 
+    float area() {
+        this.area = (float)0.5 * side1_base * height;
+        return this.area;
+    }
+    @Override 
+    float perimeter() {
+        this.perimeter = side1_base + side2 + side3;
+        return this.perimeter;
+    }
+}
+class Square extends Shape {
+    public float side1;
+    public Square(float area, float perimeter, float side1) {
+        super(area, perimeter);
+        this.side1 = side1;
+    }
+    @Override 
+    float area() {
+        this.area = side1*side1;
+        return this.area;
+    }
+    @Override 
+    float perimeter() {
+        this.perimeter = side1*4;
+        return this.perimeter;
+    }
+}
+class Ellipse extends Shape {
+    public float r;
+    public float a;
+    public float b;
+    public Ellipse(float area, float perimeter, float r, float a, float b) {
+        super(area, perimeter);
+        this.r = r;
+        this.a = a;
+        this.b = b;
+    }
+    @Override 
+    float area() {
+        this.area = (float)3.14 * a * b;
+        return this.area;
+    }
+    @Override 
+    float perimeter() {
+        this.perimeter = (float)3.14 * (3 * (a + b) - (float)0.5 * ((3 * a + b)*(a + 3 * b)));
+        return this.perimeter;
+    }
+}
