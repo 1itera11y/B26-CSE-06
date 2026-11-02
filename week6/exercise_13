@@ -1,1 +1,23 @@
-//in the process
+package com.example;
+import java.nio.file.*;
+import java.io.IOException;
+import java.util.Scanner;
+class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        System.out.println("Enter path to the file");
+        String path = sc.nextLine();
+        Path path1 = Path.of(path);
+        boolean exists = Files.exists(path1);
+        boolean isDirectory = Files.isDirectory(path1);
+        if (isDirectory && exists) {
+            System.out.println("This is the directory");
+        }
+        else if (!isDirectory && exists) {
+            System.out.println("This is a file");
+        }
+        else {
+            System.out.println("Your path is invalid");
+        }
+    }
+}
