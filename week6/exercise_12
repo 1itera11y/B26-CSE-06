@@ -1,1 +1,19 @@
-//in the process
+package com.example;
+import java.nio.file.*;
+import java.io.IOException;
+import java.util.Scanner;
+class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        System.out.println("Enter path to the file");
+        String path = sc.nextLine();
+        Path path1 = Path.of(path);
+        try {
+            String text = Files.readString(path1);
+            System.out.println("File exists");
+        } catch (IOException error) {
+            System.out.println("File does not exist");
+        }
+
+    }
+}
