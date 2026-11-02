@@ -1,6 +1,6 @@
 package com.example;
 import java.nio.file.*;
-import java.io.IOException;
+
 import java.util.Scanner;
 class Main {
     public static void main(String[] args) {
@@ -8,12 +8,12 @@ class Main {
         System.out.println("Enter path to the file");
         String path = sc.nextLine();
         Path path1 = Path.of(path);
-        try {
-            String text = Files.readString(path1);
-            System.out.println("File exists");
-        } catch (IOException error) {
-            System.out.println("File does not exist");
+        boolean exists = Files.exists(path1);
+        if (exists) {
+            System.out.println("This directory or file exist");
         }
-
+        else {
+            System.out.println("Your path is invalid");
+        }
     }
 }
