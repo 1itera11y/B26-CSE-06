@@ -1,0 +1,118 @@
+import java.util.ArrayList;
+
+public abstract class Creature {
+    private String name;
+    private boolean isAlive;
+    public Creature(String name, boolean isAlive) {    
+        this.name = null;
+        this.isAlive = false;
+    }
+    public Creature(boolean isAlive) {
+        this.isAlive = false;
+    }
+    public abstract void bear(String name);
+    public abstract void die();
+    public void shoutName() {
+        if (name != null) {
+            System.out.println(name);
+        }
+        else {
+            System.out.println("Error");
+        }
+    }
+    public void setter(String name) {
+        this.name = name;
+    }
+    public String getter() {
+        String name = this.name;
+        return name;
+    }
+}
+class Alien extends Creature {
+    public Alien(String name, boolean isAlive) {
+        super(name,isAlive);
+    }
+    public Alien(boolean isAlive) {
+        super(isAlive);
+    }
+    @Override 
+    public void bear(String name) {
+        setter(name);
+        System.out.println("The Alien " + name + " was born");
+    }
+    @Override 
+    public void die() {
+        String name = getter();
+        System.out.println("The Alien " + name + " has died");
+    }
+}
+final class Human extends Animal {
+    public Human(String name, boolean isAlive) {
+        super(name,isAlive);
+    }
+    public Human(boolean isAlive) {
+        super(isAlive);
+    }
+    @Override 
+    public void bear(String name) {
+        setter(name);
+        System.out.println("The Human " + name + " was born");
+    }
+    @Override 
+    public void die() {
+        String name = getter();
+        System.out.println("The Human " + name + " has died");
+    }
+}
+final class Dog extends Animal {
+    public Dog(String name, boolean isAlive) {
+        super(name,isAlive);
+    }
+    public Dog(boolean isAlive) {
+        super(isAlive);
+    }
+    @Override 
+    public void bear(String name) {
+        setter(name);
+        System.out.println("The Dog " + name + " was born");
+    }
+    @Override 
+    public void die() {
+        String name = getter();
+        System.out.println("The Dog " + name + " has died");
+    }
+    public void bark() {
+
+    }
+}
+class Animal extends Creature {
+    public Animal(String name, boolean isActive) {
+        super(name, isActive);
+    }
+    public Animal(boolean isActive) {
+        super(isActive);
+    }
+    public void bear(String name) {}
+    public void die() {}
+
+
+}
+class AbstractClassDemonstration {
+    public static void main(String args[]) {
+        Creature alien = new Alien(true);
+        alien.bear("slien");
+        alien.die();
+        Creature human = new Human(true);
+        Creature dog = new Dog(true);
+        ArrayList<Creature> creatures = new ArrayList<>();
+
+        creatures.add(alien);
+        creatures.add(human);
+        creatures.add(dog);
+        String[] arrayofnames = {"$#*(@#*$),$*%7#(KFP$)#($*&%","Max","dog"};
+        for (int i = 0, j = 0; i < 3; i++,j++) {
+            creatures.get(i).bear(arrayofnames[j]);
+            creatures.get(i).die();
+        }
+    }
+}
