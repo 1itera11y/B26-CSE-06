@@ -1,0 +1,61 @@
+import java.util.ArrayList;
+class InterfaceDemostration {
+    public static void main(String args[]) {
+        Duck duck = new Duck();
+        Penguin penguin = new Penguin();
+        Submarine submarine = new Submarine();
+        ArrayList<Living> livingobjects = new ArrayList<>();
+        livingobjects.add(duck);
+        livingobjects.add(penguin);
+        for (int i = 0; i < livingobjects.size(); i++) {
+            livingobjects.get(i).live();
+        }
+    }
+}
+interface Swimmable {
+    public void swim();
+    public void stopSwimming();
+}
+class Submarine implements Swimmable {
+    @Override
+    public void swim() {}
+    @Override
+    public void stopSwimming() {}
+}
+interface Flyable {
+    public void fly();
+    public void stopFlying();
+}
+interface Living {
+    public default void live() {
+        System.out.println(this.getClass().getSimpleName() + " lives");
+    }
+}
+class Penguin implements Living, Swimmable {
+    @Override
+    public void swim() {
+
+    }
+    @Override
+    public void stopSwimming() {
+
+    }
+}
+class Duck implements Living,Swimmable,Flyable {
+    @Override
+    public void swim() {
+
+    }
+    @Override
+    public void stopSwimming() {
+
+    }
+    @Override
+    public void fly() {
+
+    }
+    @Override
+    public void stopFlying() {
+
+    }
+}
