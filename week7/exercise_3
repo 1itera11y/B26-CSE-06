@@ -1,0 +1,110 @@
+import java.util.Scanner;
+class Time {
+    int hours;
+    int minutes;
+    int seconds;
+    public Time(int hours) {
+        this.hours = hours;
+    }
+    public Time(int hours, int minutes) {
+        this.hours = hours;
+        this.minutes = minutes;
+    }
+    public Time(int hours, int minutes, int seconds) {
+        this.hours = hours;
+        this.minutes = minutes;
+        this.seconds = seconds;
+    }
+    public Time timeShouldGo() {
+        this.seconds++;
+        if (this.seconds == 60) {
+            this.minutes++;
+            this.seconds = 0;
+            if (this.minutes == 60) {
+                this.hours++;
+                this.minutes = 0;
+            }
+        }
+        return this;
+    }
+    public void difference(Time time1, Time time2) {
+        int diff;
+        int totalSeconds1 = time1.hours * 3600 + time1.minutes * 60 + time1.seconds;
+        int totalSeconds2 = time2.hours * 3600 + time2.minutes * 60 + time2.seconds;
+        diff = Math.abs(totalSeconds1 - totalSeconds2);
+        System.out.println("Difference: " + diff + " seconds");
+    }
+}
+
+class TimeCreator {
+    public void chooseOperation() {
+        Scanner sc = new Scanner(System.in);
+        Time time1 = null;
+        Time time2 = null;
+        for (int i = 0; i < 2; i++) {
+            System.out.println("Enter 1 or 2 or 3");
+            int numofoperation = sc.nextInt();
+            if (numofoperation == 1) {
+                int hours;
+
+                System.out.println("Enter hours");
+                hours = sc.nextInt();
+                if (i == 0) {    
+                    time1 = new Time(hours);
+                }
+                else {
+                    time2 = new Time(hours);
+                }
+                if (time1 != null && time2 != null) {
+                    time1.difference(time1, time2);
+                }
+                
+            }
+            else if (numofoperation == 2) {
+                int hours;
+                int minutes;
+
+                System.out.println("Enter hours and minutes");
+                hours = sc.nextInt();
+                minutes = sc.nextInt();
+                if (i == 0) {    
+                    time1 = new Time(hours,minutes);
+                }
+                else {
+                    time2 = new Time(hours, minutes);
+                }
+                if (time1 != null && time2 != null) {
+                    time1.difference(time1, time2);
+                }
+            }
+            else if (numofoperation == 3) {
+                int hours;
+                int minutes;
+                int seconds;
+
+                System.out.println("Enter hours, minutes and seconds");
+                hours = sc.nextInt();
+                minutes = sc.nextInt();
+                seconds = sc.nextInt();
+                if (i == 0) {    
+                    time1 = new Time(hours,minutes,seconds);
+                }
+                else {
+                    time2 = new Time(hours, minutes, seconds);
+                }
+                if (time1 != null && time2 != null) {
+                    time1.difference(time1, time2);
+                }
+                
+            }
+            else {System.out.println("Error"); return;}
+        }
+    }
+}
+class Demonstration {
+    public static void main(String args[]) {
+        TimeCreator timecreator = new TimeCreator();
+        Time time1 = new Time(10, 0);
+        time1.timeShouldGo().timeShouldGo().timeShouldGo();
+    }
+}
