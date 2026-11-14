@@ -1,0 +1,120 @@
+import java.util.Scanner;
+public class demonstration {
+    public static void main(String args[]) {
+        Scanner sc = new Scanner(System.in);
+        User user = new User();
+        User patient = new Patient("Guy",null,false,false);
+        user.chooseType();
+        if (user.getType().equals("Doctor")) {
+            Doctor user1 = new Doctor();
+            user1.checkPatient( (Patient) patient);
+        }
+        else if (user.getType().equals("Patient")) {
+            System.out.println("name: ");
+            String name = sc.nextLine();
+            Patient patient1 = new Patient(name,null,false,false);
+            patient1.payBill();
+        }
+        else if (user.getType().equals("Receptionist")) {
+            Receptionist receptionist = new Receptionist();
+            receptionist.generateBill((Patient) patient);
+            receptionist.giveAppointments((Patient) patient);
+        }
+    }
+}
+class User {
+    private String type;
+    public void chooseType() {
+        System.out.println("Choose type: Doctor, Receptionist or Patient. Please, write full word");
+        Scanner sc = new Scanner(System.in);
+        String type = sc.nextLine();
+        if (type.equals("Doctor") == false && type.equals("Receptionist") == false && type.equals("Patient") == false) {System.out.println("Such type does not exist"); return;}
+        this.type = type;
+    }
+    public String getType() {
+        return this.type;
+    }
+}
+class Patient extends User {
+    private int id = (int) (Math.random() * 1000 );
+    private String name;
+    private String appointment;
+    private boolean checkedByDoctor;
+    private boolean hasBill;
+    private Bill bill;
+
+    Patient(String name, String appointment, boolean checkedByDoctor, boolean hasBill) {
+        this.name = name;
+        this.appointment = appointment;
+        this.checkedByDoctor = checkedByDoctor;
+        this.hasBill = hasBill;
+    }
+
+    public void payBill() {
+        if (this.bill != null) {    
+            System.out.println("The patient paid " + bill.getAmount() + " for the bill " + "\"" + bill.getId() + "\"");
+            this.hasBill = false;
+            this.bill = null;
+        }
+    }
+    public Bill getBill() {
+        return this.bill;
+    }
+    public void setBill(Bill bill) {
+        this.bill = bill;
+    }
+    public String getName() {
+        return this.name;
+    }
+    public void setAppointment(String appoint) {
+        this.appointment = appoint;
+    }
+    public String toString() {
+        return "id: " + this.id + " name:" + this.name + " amount:" + this.checkedByDoctor + " " + this.hasBill + " " + this.bill; 
+    }
+}
+
+class Bill {
+    private int id;
+    private String name;
+    private int amount;
+    Bill(int id, String name, int amount) {
+        this.id = id;
+        this.name = name;
+        this.amount = amount;
+    }
+    public int getId() {
+        return this.id;
+    }
+    public int getAmount() {
+        return this.amount;
+    }
+    public String toString() {
+        return "id: " + this.id + " name:" + this.name + " amount:" + this.amount; 
+    }
+}
+class Doctor extends User {
+    public void checkPatient(Patient patient) {
+        System.out.println("The patient with name " + patient.getName() + " is not ill");
+    }
+}
+class Receptionist extends User {
+    Scanner sc = new Scanner(System.in);
+    
+    public void generateBill(Patient patient) {
+        if (patient.getBill() != null) {
+            System.out.println("This patient already have bill:" + patient.getBill().toString());
+        }
+        System.out.println("Please, write id, amount, and name for the bill for patient with name: " + patient.getName());
+        int id = sc.nextInt();
+        int amount = sc.nextInt();
+        String name = sc.next();
+        Bill bill = new Bill(id, name, amount);
+        patient.setBill(bill);
+    }
+    public void giveAppointments(Patient patient) {
+        System.out.println("Set appoinment for the patient with name " + patient.getName());
+        String appointment = sc.next();
+        patient.setAppointment(appointment);
+    }
+}
