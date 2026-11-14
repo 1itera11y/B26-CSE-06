@@ -1,0 +1,84 @@
+import java.util.Scanner;
+public class VendingMachine {
+    public static void main(String args[]) {
+        Scanner sc = new Scanner(System.in);
+        System.out.println("Menu:\nDobri Cola:  5$\nDobri Lime:  6$\nZloy Apelsin:  12$");
+        System.out.println("Please choose drink by number 0/1/2");
+        int operation = sc.nextInt();
+        int cost;
+        switch(operation) {
+            case 0: cost = 5; break;
+            case 1: cost = 6; break;
+            case 2: cost = 12; break;
+            default: System.out.println("Object does not exist"); return;
+        }
+        System.out.println("Now insert money (dollars)");
+        int money = (int) sc.nextDouble();
+        int returnMoney;
+        if (money < cost) {System.out.println("Not enough money"); return;}
+        else if (money > cost) {
+            returnMoney = money - cost;
+            switch(operation) {
+                case 0: 
+                returnMoney = returning(returnMoney);
+                System.out.println("You successfully bought Dobri Cola\nI am returning to you extra money: " + returnMoney); 
+                break;
+                case 1: 
+                returnMoney = returning(returnMoney);
+                System.out.println("You successfully bought Dobri Lime\n I am returning to you extra money: " + returnMoney);
+                break;
+                case 2: 
+                returnMoney = returning(returnMoney);
+                System.out.println("You successfully bought Zloy Apelsinka\nI am returning to you extra money: " + returnMoney);
+                break;
+            }
+        }
+        else {
+            switch(operation) {
+                case 0: 
+                System.out.println("You successfully bought Dobri Cola"); 
+                break;
+                case 1: 
+                System.out.println("You successfully bought Dobri Lime");
+                break;
+                case 2: 
+                System.out.println("You successfully bought Zloy Apelsinka");
+                break;
+            }
+        }
+    }
+    public static int returning(int money) { // дописать функцию. Деньги можно принять как doble, но сразу перевести в int
+        int closestNomination = 0;
+        int tempminus = money;
+        for (int i = 0; i < 1000; i++) {
+            if ((tempminus != 10 && tempminus != 5 && tempminus != 2 && tempminus != 1) == true) {
+                tempminus--;
+            }
+            else {
+                closestNomination = tempminus;
+                break;
+            }
+        }
+        return closestNomination;
+    }
+}
+
+enum Drinks {
+    DOBRI_COLA,
+    DOBRI_LIME,
+    ZLOY_APELSIN
+}
+
+enum Money {
+    dollars1 (1),
+    dollars5 (5),
+    dollars10 (10),
+    dollars20 (20);
+    private final int denomination;
+    Money(int denomination) {
+        this.denomination = denomination;
+    }
+    public int getter() {
+        return this.denomination;
+    }
+}
