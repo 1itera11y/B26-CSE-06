@@ -1,0 +1,14 @@
+import java.util.Set;
+import java.util.HashSet;
+class Main {
+    public static void main(String args[]) {
+        HashSet<String> numbers = new HashSet<>();
+        numbers.add("1");
+        numbers.add("12");
+        numbers.add("123");
+        numbers.add("1234");
+        numbers.add("123456");
+        numbers.removeIf(number -> number.length() % 2 != 0);
+        System.out.println(numbers);
+    }
+}
