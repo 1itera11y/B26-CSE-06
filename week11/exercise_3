@@ -1,0 +1,47 @@
+import java.util.List;
+import java.util.ArrayList;
+public class Main {
+    public static void main(String args[]) {
+        Animal an1 = new Dog("dog",30);
+        Animal an2 = new Cat("cat",26);
+        Animal an3 = new Lion("lion",27);
+        Animal an4 = new Cat("Cat",28);
+        Animal an5 = new Dog("SnupDog",29);
+        ArrayList<Animal> animals = new ArrayList<Animal>();
+        animals.add(0,an1);
+        animals.add(1,an2);
+        animals.remove(0);
+        animals.add(0,an3);
+        animals.add(2,an4);
+        animals.add(3,an5);
+        display(animals);
+    }
+    public static void display(ArrayList<Animal> animals) {
+        for (int i = 0; i < animals.size(); i++) {    
+            System.out.println(animals.get(i).name + " " + animals.get(i).age);
+        }
+    }
+}
+abstract class Animal {
+    String name;
+    int age;
+    Animal(String name, int age) {
+        this.name = name;
+        this.age = age;
+    }
+}
+class Dog extends Animal {
+    Dog(String name, int age) {
+        super(name, age);
+    }
+}
+class Cat extends Animal {
+    Cat(String name, int age) {
+        super(name, age);
+    }
+}
+class Lion extends Animal {
+    Lion(String name, int age) {
+        super(name, age);
+    }
+}
