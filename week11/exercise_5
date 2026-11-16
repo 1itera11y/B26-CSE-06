@@ -1,0 +1,25 @@
+import java.util.Map;
+import java.util.HashMap;
+import java.util.Scanner;
+class Main {
+    public static void main(String args[]) {
+        Scanner sc = new Scanner(System.in);
+        Map<String, Integer> map = new HashMap<>();
+        for (int i = 0; i < 1000; i++) {
+            System.out.println("Loop has updated. Enter 0 if you want to end the programm, else any other number.");
+            int n = sc.nextInt();
+            if (n == 0) return;
+            System.out.println("Enter any key:String");
+            String keyS = sc.next();
+            System.out.println(" and value:int");
+            int valueS = sc.nextInt();
+            int k = 0;
+            for( Integer value : map.values()) {
+                if (valueS == value) {System.out.println("Value already exists in the map"); break;}
+                else k++;
+                if (k == map.size()) {System.out.println("Value is new");}
+            }
+            map.put(keyS,valueS);
+       }
+    }
+}
