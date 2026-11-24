@@ -1,0 +1,20 @@
+import java.io.*;
+import java.nio.file.*;
+public class Exercises {
+    public static void main(String args[]) {
+        Path in = Path.of("input.txt");
+        Path out = Path.of("output.txt");
+        try(BufferedReader reader = Files.newBufferedReader(in); BufferedWriter writer = Files.newBufferedWriter(out)) {
+            
+            String line = reader.readLine();
+            String[] tokens = line.split(" ");
+            int temp = Integer.parseInt(tokens[0]) / Integer.parseInt(tokens[1]);
+            writer.write(String.valueOf(temp));
+        }
+        catch (IOException e) {
+            System.out.println(e.getMessage());
+            Throwable[] suppressed = e.getSuppressed();
+            System.out.println(suppressed.getMessage());
+        }
+    }
+}
